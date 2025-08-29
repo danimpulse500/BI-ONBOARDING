@@ -556,6 +556,13 @@
             Business Name
           </label>
         </div>
+          <div class="form-input relative">
+            <input type="text" id="product" placeholder=" " class="peer w-full border-b-2 border-gray-300 focus:border-emerald-600 outline-none py-2" required>
+            <label for="product" class="absolute left-0 top-2 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm peer-focus:text-emerald-600">
+              What Do You Sell?
+            </label>
+          </div>
+
       </div>
 
       <!-- Common Fields -->
@@ -579,6 +586,8 @@
           Phone Number
         </label>
       </div>
+
+    
 
       <!-- Service Cards (Service Providers only) -->
       <div id="serviceCards" class="service-only hidden">
@@ -626,6 +635,45 @@
                     });
                   }
                    });
+                   document.getElementById("vendorForm").addEventListener("submit", async function(e) {
+                        e.preventDefault();
+
+                        const role = document.querySelector(".role-btn.bg-[#008000]")?.dataset.role || "vendor";
+                        const businessName = document.getElementById("businessName")?.value || "";
+                        const product = document.getElementById("product")?.value || "";
+                        const fullName = document.getElementById("fullName")?.value || "";
+                        const email = document.getElementById("email")?.value || "";
+                        const phone = document.getElementById("phone")?.value || "";
+                        const selectedServices = document.getElementById("selectedServices")?.value || "";
+
+                        try {
+                          const response = await fetch("http://localhost:3000/submit", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              role,
+                              businessName,
+                              product,
+                              fullName,
+                              email,
+                              phone,
+                              selectedServices
+                            })
+                          });
+
+                          const data = await response.json();
+                          if (data.success) {
+                            alert("✅ Registration submitted successfully!");
+                            document.getElementById("vendorForm").reset();
+                          } else {
+                            alert("❌ Failed: " + data.error);
+                          }
+                        } catch (err) {
+                          console.error("Error:", err);
+                          alert("❌ Something went wrong. Check console.");
+                        }
+                      });
+
                 </script>
 
               <script>
@@ -751,6 +799,29 @@
                       serviceCardsContainer.style.display = 'none';
                     });
                   </script>
+<script>
+const form = document.getElementById('vendorForm');
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const payload = {
+    businessName: document.getElementById('businessName')?.value || "",
+    fullName: document.getElementById('fullName').value,
+    email: document.getElementById('email').value,
+    phone: document.getElementById('phone').value,
+    selectedServices: document.getElementById('selectedServices').value
+  };
+
+  const res = await fetch('/api/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  const result = await res.json();
+  alert(result.message);
+});
+</script>
 
                 <style>
                   .service-card {

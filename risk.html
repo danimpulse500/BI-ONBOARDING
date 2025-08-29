@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Risk/Reward Calculator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom right, #00b386, #ffffff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 450px;
+    }
+    h2 {
+      text-align: center;
+      color: #00b386;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: 600;
+      margin: 10px 0 5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #333;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus {
+      border-color: #00b386;
+      box-shadow: 0 0 4px #00b38644;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #00b386;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease;
+    }
+    button:hover {
+      transform: scale(1.03);
+      box-shadow: 0 4px 12px rgba(0, 179, 134, 0.4);
+    }
+    .result {
+      margin-top: 15px;
+      padding: 15px;
+      border-radius: 10px;
+      background: #f9f9f9;
+      text-align: center;
+      font-weight: 500;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2><i class="fas fa-chart-line"></i> Risk/Reward Calculator</h2>
+
+    <label><i class="fas fa-wallet"></i> Account Balance ($)</label>
+    <input type="number" id="balance" value="10">
+
+    <label><i class="fas fa-coins"></i> Risk Amount ($)</label>
+    <input type="number" id="risk" value="1">
+
+    <label><i class="fas fa-bullseye"></i> Entry Price</label>
+    <input type="number" id="entry" value="857.60">
+
+    <label><i class="fas fa-signal"></i> Leverage (x)</label>
+    <input type="number" id="leverage" value="10">
+
+    <label><i class="fas fa-ruler-combined"></i> Risk/Reward Ratio</label>
+    <input type="number" id="rr" value="4">
+
+    <label><i class="fas fa-random"></i> Direction</label>
+    <select id="direction">
+      <option value="long">Long <i class="fas fa-rocket"></i></option>
+      <option value="short">Short <i class="fas fa-arrow-down"></i></option>
+    </select>
+
+    <button onclick="calculate()"><i class="fas fa-calculator"></i> Calculate</button>
+
+    <div class="result" id="result">
+      <i class="fas fa-info-circle"></i> Fill in details and click Calculate
+    </div>
+  </div>
+
+  <script>
+    function calculate() {
+      const balance = parseFloat(document.getElementById("balance").value);
+      const risk = parseFloat(document.getElementById("risk").value);
+      const entry = parseFloat(document.getElementById("entry").value);
+      const leverage = parseFloat(document.getElementById("leverage").value);
+      const rr = parseFloat(document.getElementById("rr").value);
+      const direction = document.getElementById("direction").value;
+
+      const positionSize = (balance * leverage) / entry;
+      const riskAmount = risk / balance;
+      const priceMove = (entry * riskAmount) / positionSize;
+      const sl = direction === "long" ? entry - priceMove : entry + priceMove;
+      const tp = direction === "long" ? entry + (priceMove * rr) : entry - (priceMove * rr);
+
+      document.getElementById("result").innerHTML = `
+        <i class="fas fa-times-circle" style="color:red"></i> Stop Loss: <b>${sl.toFixed(2)}</b><br>
+        <i class="fas fa-rocket" style="color:green"></i> Take Profit: <b>${tp.toFixed(2)}</b>
+      `;
+    }
+  </script>
+</body>
+</html>
